@@ -27,7 +27,7 @@ public enum Arah {
 		
 		if (normalX == -1 ){
 			if (normalY == -1){
-				arah = Arah.BARAT;
+				arah = Arah.BARATLAUT;
 			} else if (normalY == 0){
 				arah = UTARA;
 			} else {

@@ -35,19 +35,36 @@ public class CaturController {
 		return valid;
 	}
 	
+	/**
+	 * Mengecek apakah jalur menteri valid. Yang termasuk jalur valid yaitu:
+	 * 1. Serong kiri
+	 * 2. Serong kanan
+	 * @param awal posisi
+	 * @param akhir posisi
+	 * @return true jika valid
+	 */
 	public boolean cekMenteri(Posisi awal, Posisi akhir){
 		int delta[] = Helper.getDelta(awal, akhir);
 		boolean valid = Helper.samaTanpaSimbol(delta[0], delta[1]);
 		
 		if(valid){
 			Arah arah = Arah.getArah(delta[0], delta[1]);
+			Posisi[] listPosisi = Helper.getSemuaPosisi(awal, akhir, arah);
 			
+			int index = cekKosong(listPosisi);
+			valid = index == listPosisi.length;
+			int indexAkhir = listPosisi.length - 1;
+			
+			if (!valid && index == indexAkhir){
+				AnakCatur pion = papanModel.getAnakCatur(awal);
+				valid = isMilikLawan(pion.getPemilik(), akhir);
+			}
 		}
 		return valid;
 	}
 	
 	/**
-	 * Mengecek apakah jalur kuda valid
+	 * Mengecek apakah jalur kuda valid. Yang termasuk jalur valid yaitu jalur yg membentuk huruf L
 	 * @param awal posisi
 	 * @param akhir posisi
 	 * @return true jika valid
@@ -66,7 +83,11 @@ public class CaturController {
 	}
 	
 	/**
-	 * Mengecek apakah jalur pion valid
+	 * Mengecek apakah jalur pion valid. Yang termasuk jalur valid yaitu:
+	 * 1. Maju selangkah
+	 * 2. Maju 2 langkah
+	 * 3. Serong kiri
+	 * 4. Serong kanan
 	 * @param awal posisi
 	 * @param akhir posisi
 	 * @return true jika valid
@@ -81,12 +102,12 @@ public class CaturController {
 		
 		// cek maju ke kiri
 		lanjut = Helper.getLangkahSelanjutnya(awal, kiri);
-		valid = isMilikLawan(pion.getPemilik(), lanjut);
+		valid = lanjut != null && isMilikLawan(pion.getPemilik(), lanjut);
 		
 		// cek maju ke kanan
 		if (!valid){
 			lanjut = Helper.getLangkahSelanjutnya(awal, kanan);
-			valid = isMilikLawan(pion.getPemilik(), lanjut);
+			valid = lanjut != null && isMilikLawan(pion.getPemilik(), lanjut);
 		}
 		
 		// cek maju satu langkah
@@ -127,6 +148,22 @@ public class CaturController {
 			}
 		}
 		return valid;
+	}
+	
+	/**
+	 * Mencari index posisi yang tidak kosong
+	 * @param posisi posisi
+	 * @return int index
+	 */
+	public int cekKosong(Posisi[] posisi){
+		int i = 0;
+		
+		for (;i<posisi.length; i++){
+			if (!isKosong(posisi[i])){
+				break;
+			}
+		}
+		return i;
 	}
 	
 	/**

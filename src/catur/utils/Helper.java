@@ -94,17 +94,23 @@ public class Helper {
 	 * @param awal posisi
 	 * @param akhir posisi
 	 * @param arah arah
-	 * @return ArrayList kumpulan posisi
+	 * @return Array kumpulan posisi
 	 */
-	public static ArrayList<Posisi> getSemuaPosisi(Posisi awal, Posisi akhir, Arah arah){
+	public static Posisi[] getSemuaPosisi(Posisi awal, Posisi akhir, Arah arah){
 		ArrayList<Posisi> posisi = new ArrayList<Posisi>();
 		Posisi lanjut = awal;
 		
 		do{
 			lanjut = getLangkahSelanjutnya(lanjut, arah);
+			posisi.add(lanjut);
 		} while (lanjut != null && !lanjut.sama(akhir));
+		System.out.println("ArrayList: " + posisi.toString());
 		
-		return posisi;
+		Posisi[] temp = new Posisi[posisi.size()];
+		for (int i=0; i<posisi.size(); i++){
+			temp[i] = posisi.get(i);
+		}
+		return temp;
 	}
 	
 	/**
@@ -179,8 +185,8 @@ public class Helper {
 	public static int[] getDelta(Posisi awal, Posisi akhir){
 		int[] tab = new int[2];
 		
-		tab[0] = awal.getPosisiX() - akhir.getPosisiX();
-		tab[1] = awal.getPosisiY() - akhir.getPosisiY();
+		tab[0] = akhir.getPosisiX() - awal.getPosisiX();
+		tab[1] = akhir.getPosisiY() - awal.getPosisiY();
 		return tab;
 	}
 	
