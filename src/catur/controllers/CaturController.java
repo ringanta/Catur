@@ -16,13 +16,11 @@ public class CaturController {
 	
 	public boolean isJalurValid(Posisi awal, Posisi akhir){
 		boolean valid = true;
-		int deltaX = akhir.getPosisiX() - awal.getPosisiX();
-		int deltaY = akhir.getPosisiY() - awal.getPosisiY();
 		boolean jalurKuda = false;
 		AnakCatur pion = papanModel.getAnakCatur(awal);
 		
 		if (pion.getType() == TypeAnak.KUDA){
-			valid = Helper.isJalurKuda(deltaX, deltaY);
+			valid = cekKuda(awal, akhir);
 		} else if (pion.getType() == TypeAnak.PION){
 			valid = cekPion(awal, akhir);
 		}
@@ -30,9 +28,24 @@ public class CaturController {
 		return valid;
 	}
 	
-	
-	public boolean cekKuda(int deltaX, int deltaY){
-		return Helper.isJalurKuda(deltaX, deltaY);
+	/**
+	 * Mengecek apakah jalur kuda valid
+	 * @param awal posisi
+	 * @param akhir posisi
+	 * @return true jika valid
+	 */
+	public boolean cekKuda(Posisi awal, Posisi akhir){
+		int deltaX = akhir.getPosisiX() - awal.getPosisiX();
+		int deltaY = akhir.getPosisiY() - awal.getPosisiY();
+		boolean valid = Helper.isJalurKuda(deltaX, deltaY);
+		
+		if (valid){
+			if (!isKosong(akhir)){
+				AnakCatur pion = papanModel.getAnakCatur(awal);
+				valid = isMilikLawan(pion.getPemilik(), akhir);
+			}
+		}
+		return valid;
 	}
 	
 	/**
@@ -43,7 +56,6 @@ public class CaturController {
 	 */
 	public boolean cekPion(Posisi awal, Posisi akhir){
 		boolean valid = true;
-		int[] delta = Helper.getDelta(awal, akhir);
 		AnakCatur pion = papanModel.getAnakCatur(awal);
 		Posisi lanjut = null;
 		Arah arah = pion.getPemilik() == 0 ? Arah.SELATAN : Arah.UTARA;
