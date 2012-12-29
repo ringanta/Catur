@@ -14,17 +14,35 @@ public class CaturController {
 		papanModel = papan;
 	}
 	
+	/**
+	 * Mengecek apakah perpindahan anak catur dari posisi awal menuju posisi akhir valid
+	 * @param awal posisi
+	 * @param akhir posisi
+	 * @return true jika valid
+	 */
 	public boolean isJalurValid(Posisi awal, Posisi akhir){
 		boolean valid = true;
-		boolean jalurKuda = false;
 		AnakCatur pion = papanModel.getAnakCatur(awal);
 		
 		if (pion.getType() == TypeAnak.KUDA){
 			valid = cekKuda(awal, akhir);
 		} else if (pion.getType() == TypeAnak.PION){
 			valid = cekPion(awal, akhir);
+		} else if (pion.getType() == TypeAnak.MENTERI){
+			valid = cekMenteri(awal, akhir);
 		}
-		//valid = Helper.isLangkahValid(awal, akhir);
+		
+		return valid;
+	}
+	
+	public boolean cekMenteri(Posisi awal, Posisi akhir){
+		int delta[] = Helper.getDelta(awal, akhir);
+		boolean valid = Helper.samaTanpaSimbol(delta[0], delta[1]);
+		
+		if(valid){
+			Arah arah = Arah.getArah(delta[0], delta[1]);
+			
+		}
 		return valid;
 	}
 	
@@ -35,9 +53,8 @@ public class CaturController {
 	 * @return true jika valid
 	 */
 	public boolean cekKuda(Posisi awal, Posisi akhir){
-		int deltaX = akhir.getPosisiX() - awal.getPosisiX();
-		int deltaY = akhir.getPosisiY() - awal.getPosisiY();
-		boolean valid = Helper.isJalurKuda(deltaX, deltaY);
+		int delta[] = Helper.getDelta(awal, akhir);
+		boolean valid = Helper.isJalurKuda(delta[0], delta[1]);
 		
 		if (valid){
 			if (!isKosong(akhir)){
@@ -93,6 +110,23 @@ public class CaturController {
 	 */
 	public boolean isKosong(Posisi pos){
 		return papanModel.getAnakCatur(pos) == null;
+	}
+	
+	/**
+	 * Mengecek apakah seluruh posisi yang diberikan kosong
+	 * @param posisi sekumpulan posisi
+	 * @return true jika sekumpulan posisi kosong
+	 */
+	public boolean isKosong(Posisi[] posisi){
+		boolean valid = true;
+		
+		for (int i=0; i<posisi.length; i++){
+			if (!isKosong(posisi[i])){
+				valid = false;
+				break;
+			}
+		}
+		return valid;
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package catur.utils;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 
 import catur.models.AnakCatur;
 import catur.models.Posisi;
@@ -86,6 +87,24 @@ public class Helper {
 		if (isTitikValid(x, y)){
 			return new Posisi(x, y);
 		} else return null;
+	}
+	
+	/**
+	 * Menghitung seluruh posisi yang dilewati untuk mencapai titik tujuan
+	 * @param awal posisi
+	 * @param akhir posisi
+	 * @param arah arah
+	 * @return ArrayList kumpulan posisi
+	 */
+	public static ArrayList<Posisi> getSemuaPosisi(Posisi awal, Posisi akhir, Arah arah){
+		ArrayList<Posisi> posisi = new ArrayList<Posisi>();
+		Posisi lanjut = awal;
+		
+		do{
+			lanjut = getLangkahSelanjutnya(lanjut, arah);
+		} while (lanjut != null && !lanjut.sama(akhir));
+		
+		return posisi;
 	}
 	
 	/**
