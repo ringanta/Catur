@@ -197,8 +197,8 @@ public class Helper {
 	 */
 	public static boolean isPionPosisiAwal(AnakCatur pion){
 		boolean awal = false;
-		
 		int pemilik = pion.getPemilik();
+		
 		Posisi posisi = pion.getPosisi();
 		if (pemilik == 0){
 			awal = posisi.getPosisiX() == 1;
@@ -206,5 +206,23 @@ public class Helper {
 			awal = posisi.getPosisiX() == 6;
 		}
 		return awal;
+	}
+	
+	/**
+	 * Mengecek apakah pioni ada pada posisi akhir
+	 * @param pion anak catur
+	 * @return true jika di posisi akhir
+	 */
+	public static boolean isPionPosisiAkhir(AnakCatur pion){
+		boolean akhir = false;
+		int pemilik = pion.getPemilik();
+		Posisi posisi = pion.getPosisi();
+		
+		if (pemilik == 0){
+			akhir = posisi.getPosisiX() == 7;
+		} else {
+			akhir = posisi.getPosisiX() == 0;
+		}
+		return akhir;
 	}
 }

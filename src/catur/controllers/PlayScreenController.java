@@ -8,6 +8,9 @@ import catur.models.AnakCatur;
 import catur.models.PapanCaturModel;
 import catur.models.PemainCatur;
 import catur.models.Posisi;
+import catur.models.RatuModel;
+import catur.utils.Helper;
+import catur.utils.TypeAnak;
 import catur.views.InfoPermainan;
 import catur.views.PapanCatur;
 import catur.views.PlayScreen;
@@ -40,9 +43,7 @@ public class PlayScreenController extends MouseAdapter implements PosisiControla
 	
 	@Override
 	public void proses(Posisi posisi) {
-		System.out.println(posisi);
 		PapanCatur papan = playScreen.getPapan();
-		System.out.println(papanModel.getAnakCatur(posisi));
 		
 		if (isSorot()){
 			if (posisi.sama(posisiSorot)){
@@ -53,12 +54,24 @@ public class PlayScreenController extends MouseAdapter implements PosisiControla
 				if (caturCtrl.isJalurValid(posisiSorot, posisi)){
 					
 					AnakCatur pion = papanModel.getAnakCatur(posisiSorot);
+					AnakCatur pionAkhir = papanModel.getAnakCatur(posisi);
+					// anak catur memakan anak catur yg lain
+					if (pionAkhir != null){
+						papanModel.removeAnakCatur(pionAkhir);
+					}
 					pion.setPosisi(posisi);
+					
+					// pion berhasil sekolah
+					if (pion.getType() == TypeAnak.PION && Helper.isPionPosisiAkhir(pion)){
+						papanModel.removeAnakCatur(pion);
+						papanModel.addAnakCatur(new RatuModel("Ratu sekolah", giliran, posisi));
+					}
 					
 					// update tampilan
 					loadGambar();
 					posisiSorot = null;
-
+					
+					
 					gantiGiliran();
 				}
 			}

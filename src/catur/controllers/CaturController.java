@@ -1,5 +1,7 @@
 package catur.controllers;
 
+import java.util.ArrayList;
+
 import catur.models.AnakCatur;
 import catur.models.PapanCaturModel;
 import catur.models.Posisi;
@@ -30,8 +32,72 @@ public class CaturController {
 			valid = cekPion(awal, akhir);
 		} else if (pion.getType() == TypeAnak.MENTERI){
 			valid = cekMenteri(awal, akhir);
+		} else if (pion.getType() == TypeAnak.BENTENG){
+			valid = cekBenteng(awal, akhir);
+		} else if (pion.getType() == TypeAnak.RATU){
+			valid = cekMenteri(awal, akhir);
+			valid = !valid ? cekBenteng(awal, akhir) : valid;
+		} else if (pion.getType() == TypeAnak.RAJA){
+			valid = cekRaja(awal, akhir);
 		}
 		
+		return valid;
+	}
+	
+	public boolean cekRaja(Posisi awal, Posisi akhir){
+		boolean valid = true;
+		Posisi lanjut = null;
+		AnakCatur pion = papanModel.getAnakCatur(awal);
+		
+		// cek UTARA
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.UTARA);
+		valid = lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut));
+		
+		// cek TIMURLAUT
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.TIMURLAUT);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		// cek TIMUR
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.TIMUR);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		// cek TENGGARA
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.TENGGARA);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		// cek SELATAN
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.SELATAN);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		// cek BARATDAYA
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.BARATDAYA);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		// cek BARAT
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.BARAT);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		// cek BARATLAUT
+		lanjut = Helper.getLangkahSelanjutnya(awal, Arah.BARATLAUT);
+		valid = (valid || lanjut != null && lanjut.sama(akhir) && (isKosong(lanjut) || isMilikLawan(pion.getPemilik(), lanjut)));
+		
+		return valid;
+	}
+	/**
+	 * Mengecek apakah jalur benteng valid. Yang termasuk jalur valid yaitu:
+	 * 1. vertikal
+	 * 2. Horizontal
+	 * @param awal posisi
+	 * @param akhir posisi
+	 * @return true jika valid
+	 */
+	public boolean cekBenteng(Posisi awal, Posisi akhir){
+		int[] delta = Helper.getDelta(awal, akhir);
+		boolean valid = Helper.isSalahSatuNol(delta[0], delta[1]);
+		
+		if(valid){
+			valid = cekLanjutan(awal, akhir);
+		}
 		return valid;
 	}
 	
@@ -48,17 +114,7 @@ public class CaturController {
 		boolean valid = Helper.samaTanpaSimbol(delta[0], delta[1]);
 		
 		if(valid){
-			Arah arah = Arah.getArah(delta[0], delta[1]);
-			Posisi[] listPosisi = Helper.getSemuaPosisi(awal, akhir, arah);
-			
-			int index = cekKosong(listPosisi);
-			valid = index == listPosisi.length;
-			int indexAkhir = listPosisi.length - 1;
-			
-			if (!valid && index == indexAkhir){
-				AnakCatur pion = papanModel.getAnakCatur(awal);
-				valid = isMilikLawan(pion.getPemilik(), akhir);
-			}
+			valid = cekLanjutan(awal, akhir);
 		}
 		return valid;
 	}
@@ -180,5 +236,49 @@ public class CaturController {
 			hasil = pion.getPemilik() != pemilik;
 		}
 		return hasil;
+	}
+	
+	/**
+	 * Mengambil seluruh anak catur yang mengancam keberadaan anak catur yg lain
+	 * @param pion anak catur 
+	 * @return array anak catur
+	 */
+	public AnakCatur[] cekBahaya(AnakCatur pion){
+		Posisi posisiPion = pion.getPosisi();
+		int pengancam = pion.getPemilik() == 0 ? 1 : 0;
+		ArrayList<AnakCatur> listPengancam = new ArrayList<AnakCatur>();
+		AnakCatur[] tabPengancam;
+		AnakCatur[] kandidatPengancam = papanModel.getSemuaAnakCatur(pengancam);
+		
+		for (int i=0; i<kandidatPengancam.length; i++){
+			if (isJalurValid(kandidatPengancam[i].getPosisi(), posisiPion)){
+				listPengancam.add(kandidatPengancam[i]);
+			}
+		}
+		int jumlah = listPengancam.size();
+		tabPengancam = new AnakCatur[jumlah];
+		for (int i=0; i<jumlah; i++){
+			if (isJalurValid(kandidatPengancam[i].getPosisi(), posisiPion)){
+				tabPengancam[i] = listPengancam.get(i);
+			}
+		}
+		return tabPengancam;
+	}
+	
+	private boolean cekLanjutan(Posisi awal, Posisi akhir){
+		boolean valid = true;
+		int delta[] = Helper.getDelta(awal, akhir);
+		Arah arah = Arah.getArah(delta[0], delta[1]);
+		Posisi[] listPosisi = Helper.getSemuaPosisi(awal, akhir, arah);
+		
+		int index = cekKosong(listPosisi);
+		valid = index == listPosisi.length;
+		int indexAkhir = listPosisi.length - 1;
+		
+		if (!valid && index == indexAkhir){
+			AnakCatur pion = papanModel.getAnakCatur(awal);
+			valid = isMilikLawan(pion.getPemilik(), akhir);
+		}
+		return valid;
 	}
 }

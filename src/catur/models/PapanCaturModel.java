@@ -2,6 +2,8 @@ package catur.models;
 
 import java.util.ArrayList;
 
+import catur.utils.TypeAnak;
+
 public class PapanCaturModel {
 	private ArrayList<AnakCatur> pions;
 	
@@ -91,6 +93,49 @@ public class PapanCaturModel {
 	 */
 	public AnakCatur getAnakCatur(int index){
 		return pions.get(index);
+	}
+	
+	/**
+	 * Mengambil anak catur dengan tipe dan pemilik tertentu
+	 * @param tipe tipe anak catur
+	 * @param pemilik pemilik anak catur
+	 * @return Anak Catur
+	 */
+	public AnakCatur getAnakCatur(TypeAnak tipe, int pemilik){
+		AnakCatur pion = null;
+		AnakCatur temp;
+		
+		for (int i=0; i<getJumlahPion(); i++){
+			temp = getAnakCatur(i);
+			if (temp.getType() == tipe && temp.getPemilik() == pemilik){
+				pion = temp;
+				break;
+			}
+		}
+		return pion;
+	}
+	
+	/**
+	 * Mengambil seluruh anak catur milik pemain
+	 * @param pemain pemain
+	 * @return array anak catur
+	 */
+	public AnakCatur[] getSemuaAnakCatur(int pemain){
+		ArrayList<AnakCatur> list = new ArrayList<AnakCatur>();
+		AnakCatur temp;
+		
+		for (int i=0; i<getJumlahPion(); i++){
+			temp = pions.get(i);
+			if (temp.getPemilik() == pemain){
+				list.add(temp);
+			}
+		}
+		
+		AnakCatur[] tabs = new AnakCatur[list.size()];
+		for (int i=0; i<list.size(); i++){
+			tabs[i] = list.get(i);
+		}
+		return tabs;
 	}
 	
 }
