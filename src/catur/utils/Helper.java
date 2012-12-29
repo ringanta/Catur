@@ -3,6 +3,7 @@ package catur.utils;
 import java.awt.Color;
 import java.awt.Point;
 
+import catur.models.AnakCatur;
 import catur.models.Posisi;
 import catur.views.PapanCatur;
 
@@ -162,5 +163,23 @@ public class Helper {
 		tab[0] = awal.getPosisiX() - akhir.getPosisiX();
 		tab[1] = awal.getPosisiY() - akhir.getPosisiY();
 		return tab;
+	}
+	
+	/**
+	 * Mengecek apakah pion ada pada posisi awal
+	 * @param pion anak catur
+	 * @return true jika di posisi awal
+	 */
+	public static boolean isPionPosisiAwal(AnakCatur pion){
+		boolean awal = false;
+		
+		int pemilik = pion.getPemilik();
+		Posisi posisi = pion.getPosisi();
+		if (pemilik == 0){
+			awal = posisi.getPosisiX() == 1;
+		} else {
+			awal = posisi.getPosisiX() == 6;
+		}
+		return awal;
 	}
 }
