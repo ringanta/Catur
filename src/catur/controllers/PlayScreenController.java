@@ -42,6 +42,8 @@ public class PlayScreenController extends MouseAdapter implements PosisiControla
 	public void proses(Posisi posisi) {
 		System.out.println(posisi);
 		PapanCatur papan = playScreen.getPapan();
+		System.out.println(papanModel.getAnakCatur(posisi));
+		
 		if (isSorot()){
 			if (posisi.sama(posisiSorot)){
 				posisiSorot = null;
