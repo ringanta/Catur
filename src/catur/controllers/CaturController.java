@@ -44,6 +44,13 @@ public class CaturController {
 		return valid;
 	}
 	
+	/**
+	 * Mengecek apakah jalur raja valid. Yang termasuk jalur valid yaitu:
+	 * arah utara, timur laut, timur, tenggara, selatan, barat daya, barat, dan barat laut
+	 * @param awal
+	 * @param akhir
+	 * @return
+	 */
 	public boolean cekRaja(Posisi awal, Posisi akhir){
 		boolean valid = true;
 		Posisi lanjut = null;
@@ -158,12 +165,12 @@ public class CaturController {
 		
 		// cek maju ke kiri
 		lanjut = Helper.getLangkahSelanjutnya(awal, kiri);
-		valid = lanjut != null && isMilikLawan(pion.getPemilik(), lanjut);
+		valid = lanjut != null && isMilikLawan(pion.getPemilik(), lanjut) && lanjut.sama(akhir);
 		
 		// cek maju ke kanan
 		if (!valid){
 			lanjut = Helper.getLangkahSelanjutnya(awal, kanan);
-			valid = lanjut != null && isMilikLawan(pion.getPemilik(), lanjut);
+			valid = lanjut != null && isMilikLawan(pion.getPemilik(), lanjut) && lanjut.sama(akhir);
 		}
 		
 		// cek maju satu langkah
@@ -249,18 +256,18 @@ public class CaturController {
 		ArrayList<AnakCatur> listPengancam = new ArrayList<AnakCatur>();
 		AnakCatur[] tabPengancam;
 		AnakCatur[] kandidatPengancam = papanModel.getSemuaAnakCatur(pengancam);
+		boolean flag;
 		
 		for (int i=0; i<kandidatPengancam.length; i++){
-			if (isJalurValid(kandidatPengancam[i].getPosisi(), posisiPion)){
+			flag = isJalurValid(kandidatPengancam[i].getPosisi(), posisiPion);
+			if (flag){
 				listPengancam.add(kandidatPengancam[i]);
 			}
 		}
 		int jumlah = listPengancam.size();
 		tabPengancam = new AnakCatur[jumlah];
 		for (int i=0; i<jumlah; i++){
-			if (isJalurValid(kandidatPengancam[i].getPosisi(), posisiPion)){
-				tabPengancam[i] = listPengancam.get(i);
-			}
+			tabPengancam[i] = listPengancam.get(i);
 		}
 		return tabPengancam;
 	}

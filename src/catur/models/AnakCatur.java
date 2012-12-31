@@ -107,6 +107,6 @@ public abstract class AnakCatur {
 	
 	@Override
 	public String toString(){
-		return String.format("%s, %s, %s, %s, %s", nama, type.toString(), gambar, posisi, pemilik);
+		return String.format("{%s, %s, %s, %s, %s}", nama, type.toString(), gambar, posisi, pemilik);
 	}
 }

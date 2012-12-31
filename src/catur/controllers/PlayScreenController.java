@@ -67,6 +67,56 @@ public class PlayScreenController extends MouseAdapter implements PosisiControla
 						papanModel.addAnakCatur(new RatuModel("Ratu sekolah", giliran, posisi));
 					}
 					
+					InfoPermainan infoPermainan = playScreen.getInfoPermainan();
+					StringBuffer info = new StringBuffer("<html>");
+					// cek skak
+					AnakCatur ratu = papanModel.getAnakCatur(TypeAnak.RATU, 0);
+					AnakCatur pengancam[] = caturCtrl.cekBahaya(ratu);
+					//System.out.print("Pengancam ratu 0: ");
+					//Helper.printIsiArray(pengancam);
+					if (pengancam.length > 0){
+						info.append("Ratu Pemain ").append(pemain[0].getNama()).append(" mendapat ancaman");
+						for (int i=0; i<pengancam.length; i++){
+							info.append(String.format("<br>%s. %s", (i+1), pengancam[i]));
+						}
+					}
+					
+					AnakCatur raja = papanModel.getAnakCatur(TypeAnak.RAJA, 0);
+					pengancam = caturCtrl.cekBahaya(raja);
+					//System.out.print("Pengancam raja 0: ");
+					//Helper.printIsiArray(pengancam);
+					if (pengancam.length > 0){
+						info.append("Raja Pemain ").append(pemain[0].getNama()).append(" mendapat ancaman");
+						for (int i=0; i<pengancam.length; i++){
+							System.out.println(pengancam[i]);
+							info.append(String.format("<br>%s. %s", (i+1), pengancam[i].toString()));
+						}
+					}
+					
+					ratu = papanModel.getAnakCatur(TypeAnak.RATU, 1);
+					pengancam = caturCtrl.cekBahaya(ratu);
+					//System.out.print("Pengancam ratu 1: ");
+					//Helper.printIsiArray(pengancam);
+					if (pengancam.length > 0){
+						info.append("<br>Ratu Pemain ").append(pemain[1].getNama()).append(" mendapat ancaman");
+						for (int i=0; i<pengancam.length; i++){
+							info.append(String.format("<br>%s. %s", (i+1), pengancam[i]));
+						}
+					}
+					
+					raja = papanModel.getAnakCatur(TypeAnak.RAJA, 1);
+					pengancam = caturCtrl.cekBahaya(raja);
+					//System.out.print("Pengancam raja 1: ");
+					//Helper.printIsiArray(pengancam);
+					if (pengancam.length > 0){
+						info.append("<br>Raja Pemain ").append(pemain[1].getNama()).append(" mendapat ancaman dari");
+						for (int i=0; i<pengancam.length; i++){
+							info.append(String.format("<br>%s. %s", (i+1), pengancam[i].getNama()));
+						}
+					}
+					info.append("</html>");
+					infoPermainan.setInfo(info.toString());
+					
 					// update tampilan
 					loadGambar();
 					posisiSorot = null;

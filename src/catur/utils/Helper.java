@@ -104,7 +104,6 @@ public class Helper {
 			lanjut = getLangkahSelanjutnya(lanjut, arah);
 			posisi.add(lanjut);
 		} while (lanjut != null && !lanjut.sama(akhir));
-		System.out.println("ArrayList: " + posisi.toString());
 		
 		Posisi[] temp = new Posisi[posisi.size()];
 		for (int i=0; i<posisi.size(); i++){
@@ -224,5 +223,18 @@ public class Helper {
 			akhir = posisi.getPosisiX() == 0;
 		}
 		return akhir;
+	}
+	
+	public static void printIsiArray(Object[] tab){
+		StringBuffer buf = new StringBuffer("[");
+		for (int i=0; i<tab.length; i++){
+			if (i == 0){
+				buf.append(tab[i]);
+			} else {
+				buf.append(", ").append(tab[i]);
+			}
+		}
+		buf.append("]");
+		System.out.println(buf);
 	}
 }
